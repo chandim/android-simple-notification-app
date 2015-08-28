@@ -25,12 +25,18 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat.Action;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.view.View;
+import android.widget.Toast;
 
 public class SimpleNotificationActivity extends AppCompatActivity {
   private static final int NOTIFY_ID = 100;
+  private static final String YES_ACTION = "com.tinbytes.simplenotificationapp.YES_ACTION";
+  private static final String MAYBE_ACTION = "com.tinbytes.simplenotificationapp.MAYBE_ACTION";
+  private static final String NO_ACTION = "com.tinbytes.simplenotificationapp.NO_ACTION";
+
   private NotificationManager notificationManager;
 
   @Override
@@ -68,6 +74,12 @@ public class SimpleNotificationActivity extends AppCompatActivity {
         showSoundNotification();
       }
     });
+    findViewById(R.id.bActionButtonsNotification).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        showActionButtonsNotification();
+      }
+    });
     findViewById(R.id.bClearNotifications).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -76,6 +88,8 @@ public class SimpleNotificationActivity extends AppCompatActivity {
     });
 
     notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+    processIntentAction(getIntent());
   }
 
   private Intent getNotificationIntent() {
@@ -86,7 +100,7 @@ public class SimpleNotificationActivity extends AppCompatActivity {
 
   private void showTextNotification() {
     Notification notification = new NotificationCompat.Builder(this)
-        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), 0))
+        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), PendingIntent.FLAG_UPDATE_CURRENT))
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker("Text Notification Received")
         .setContentTitle("Hi there!")
@@ -100,7 +114,7 @@ public class SimpleNotificationActivity extends AppCompatActivity {
 
   private void showVibrateNotification() {
     Notification notification = new NotificationCompat.Builder(this)
-        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), 0))
+        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), PendingIntent.FLAG_UPDATE_CURRENT))
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker("Vibrate Notification Received")
         .setContentTitle("Hi there!")
@@ -115,7 +129,7 @@ public class SimpleNotificationActivity extends AppCompatActivity {
 
   private void showLedNotification() {
     Notification notification = new NotificationCompat.Builder(this)
-        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), 0))
+        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), PendingIntent.FLAG_UPDATE_CURRENT))
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker("LED Notification Received")
         .setContentTitle("Hi there!")
@@ -130,7 +144,7 @@ public class SimpleNotificationActivity extends AppCompatActivity {
 
   private void showExpandNotification() {
     Notification notification = new NotificationCompat.Builder(this)
-        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), 0))
+        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), PendingIntent.FLAG_UPDATE_CURRENT))
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker("Expand Notification Received")
         .setContentTitle("Hi there!")
@@ -146,7 +160,7 @@ public class SimpleNotificationActivity extends AppCompatActivity {
 
   private void showSoundNotification() {
     Notification notification = new NotificationCompat.Builder(this)
-        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), 0))
+        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), PendingIntent.FLAG_UPDATE_CURRENT))
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker("Sound Notification Received")
         .setContentTitle("Hi there!")
@@ -157,6 +171,63 @@ public class SimpleNotificationActivity extends AppCompatActivity {
         .build();
 
     notificationManager.notify(NOTIFY_ID, notification);
+  }
+
+  private void showActionButtonsNotification() {
+    Intent yesIntent = getNotificationIntent();
+    yesIntent.setAction(YES_ACTION);
+
+    Intent maybeIntent = getNotificationIntent();
+    maybeIntent.setAction(MAYBE_ACTION);
+
+    Intent noIntent = getNotificationIntent();
+    noIntent.setAction(NO_ACTION);
+
+    Notification notification = new NotificationCompat.Builder(this)
+        .setContentIntent(PendingIntent.getActivity(this, 0, getNotificationIntent(), PendingIntent.FLAG_UPDATE_CURRENT))
+        .setSmallIcon(R.mipmap.ic_launcher)
+        .setTicker("Action Buttons Notification Received")
+        .setContentTitle("Hi there!")
+        .setContentText("This is even more text.")
+        .setWhen(System.currentTimeMillis())
+        .setAutoCancel(true)
+        .addAction(new Action(
+            R.mipmap.ic_thumb_up_black_36dp,
+            getString(R.string.yes),
+            PendingIntent.getActivity(this, 0, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT)))
+        .addAction(new Action(
+            R.mipmap.ic_thumbs_up_down_black_36dp,
+            getString(R.string.maybe),
+            PendingIntent.getActivity(this, 0, maybeIntent, PendingIntent.FLAG_UPDATE_CURRENT)))
+        .addAction(new Action(
+            R.mipmap.ic_thumb_down_black_36dp,
+            getString(R.string.no),
+            PendingIntent.getActivity(this, 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT)))
+        .build();
+
+    notificationManager.notify(NOTIFY_ID, notification);
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    processIntentAction(intent);
+    super.onNewIntent(intent);
+  }
+
+  private void processIntentAction(Intent intent) {
+    if (intent != null) {
+      switch (intent.getAction()) {
+        case YES_ACTION:
+          Toast.makeText(this, "Yes :)", Toast.LENGTH_SHORT).show();
+          break;
+        case MAYBE_ACTION:
+          Toast.makeText(this, "Maybe :|", Toast.LENGTH_SHORT).show();
+          break;
+        case NO_ACTION:
+          Toast.makeText(this, "No :(", Toast.LENGTH_SHORT).show();
+          break;
+      }
+    }
   }
 
   private void clearNotifications() {

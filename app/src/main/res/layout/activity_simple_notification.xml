@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="Clear Notifications"
         android:id="@+id/bClearNotifications"
-        android:layout_below="@+id/bSoundNotification"
+        android:layout_below="@+id/bActionButtonsNotification"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -70,5 +70,13 @@
         android:text="Sound Notification"
         android:id="@+id/bSoundNotification"
         android:layout_below="@+id/bExpandNotification"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Action Buttons Notification"
+        android:id="@+id/bActionButtonsNotification"
+        android:layout_below="@+id/bSoundNotification"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
